@@ -7,13 +7,16 @@
 
 #wrapper {
     padding: 10px;
+    width: calc(100vw - 40px);
+    margin: 0 auto;
+    background-color: #f9f9f9;
 }
 
 #main {
     display: flex;
     flex-direction: row;
-    width: 100vw;
     height: calc(100vh - 5em);
+    width: 100%;
     align-items: center;
     border: 1px solid #ccc;
 }
@@ -24,7 +27,7 @@ h1 {
 }
 
 #animation_area {
-    width: 70vw;
+    width: 70%;
     height: 100%;
     background-color: #f0f0f0;
     display: flex;
@@ -36,7 +39,7 @@ h1 {
 
 #parameter_area {
     height: 100%;
-    width: 30vw;
+    width: 30%;
     background-color: #e9e9e9;
     display: flex;
     flex-direction: column;
