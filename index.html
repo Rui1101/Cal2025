@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>数値計算 レポート</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+    <div id="wrapper">
+        <div id="simulator-ui">
+            <h1>熱伝導の可視化</h1>
+            <div id="main">
+                <div id="animation_area">
+                    <canvas id="heatmapCanvas"></canvas>
+                    <div id="x">
+                        <span id="x0">0</span>
+                        <span id="x0-5">0.5</span>
+                        <span id="x1">1</span>
+                    </div>
+                    <p id="canvas_title">金属棒上の熱伝導</p>
+                </div>
+                <div id="parameter_area">
+                    <label for="heatSourceSlider">熱源の位置:</label>
+                    <input type="range" id="heatSourceSlider" min="0" max="1" step="0.01" value="0.5" />
+                    <span id="sliderValue">0.50</span>
+                    <br />
+                    <label for="animationProgress">加熱状況:</label>
+                    <input type="range" id="animationProgress" min="0" max="100" step="1" value="0" />
+                    <span id="progressValue">0%</span>
+                    <br />
+                    <div id="parameter_buttons">
+                        <button id="playButton">再生</button>
+                        <button id="stopButton">停止</button>
+                        <button id="resetButton">リセット</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="info-section">
+            <hr>
+            <h2>画面の説明</h2>
+            <p>
+                画面右側のパラメータエリアでは，以下の操作を行うことができます．
+            <ul>
+                <li>熱源の位置をスライダーで調整できます。</li>
+                <li>加熱状況をスライダーで調整し，アニメーションの進行度を確認できます。</li>
+                <li>再生ボタンでアニメーションを開始，停止ボタンで停止，リセットボタンで初期状態に戻ります。</li>
+            </ul>
+            </p>
+
+            <hr>
+            <h2>数式とプログラムの関係</h2>
+            <p>このシミュレーションは、レポートで解説されている熱伝導方程式の差分法をプログラムで実装したものです。</p>
+
+            <h3>1. 熱伝導の基本式（金属棒の内部）</h3>
+            <p>金属棒の内部（両端を除く）の温度計算には、次の漸化式が使われます。</p>
+            <p><b>数式:</b></p>
+            <p>$$ u_{i,j+1} = r(u_{i+1,j} + u_{i-1,j}) + (1-2r)u_{i,j} $$</p>
+
+            <p><b>対応するプログラム:</b><br>
+                この式は、stepメソッド内のforループで実行されます。</p>
+            <pre><code>
+                for (let i = 1; i < this.nx - 1; i++) {
+                    this.nextTemperature[i] = this.temperature[i] + this.r * (this.temperature[i + 1] - 2 * this.temperature[i] + this.temperature[i - 1]);
+                }</code></pre>
+            <ul>
+                <li><code><b>u<sub>i,j+1</sub></b></code> は、次の時刻の温度配列 <code><b>nextTemperature[i]</b></code> にあたります。
+                </li>
+                <li><code><b>u<sub>i,j</sub></b></code> は、現在の温度配列 <code><b>temperature[i]</b></code> にあたります。</li>
+            </ul>
+
+            <h3>2. プログラム側での追加実装</h3>
+            <h4>境界条件（金属棒の両端）</h4>
+            <p>金属棒の両端は、熱が外部に逃げない<b>「断熱境界」</b>として扱われます。</p>
+            <p><b>対応するプログラム:</b></p>
+            <pre><code>// 左端 (i=0) の計算
+this.nextTemperature[0] = this.temperature[0] + 2 * this.r * (this.temperature[1] - this.temperature[0]);
+
+// 右端 (i=nx-1) の計算
+this.nextTemperature[this.nx - 1] = this.temperature[this.nx - 1] + 2 * this.r * (this.temperature[this.nx - 2] - this.temperature[this.nx - 1]);</code></pre>
+        </div>
+    </div>
+    <script src="script.js"></script>
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            }
+        };
+    </script>
+</body>
+
+</html>
